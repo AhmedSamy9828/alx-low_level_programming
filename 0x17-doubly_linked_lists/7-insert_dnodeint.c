@@ -1,75 +1,41 @@
 #include "lists.h"
 
 /**
- * len - function that returns the number of elements in a linked
- * @h : head
- * Return: number of elements
+ * insert_dnodeint_at_index - Inserts a new node in a dlistint_t
+ *                            list at a given position.
+ * @h: A pointer to the head of the dlistint_t list.
+ * @idx: The position to insert the new node.
+ * @n: The integer for the new node to contain.
+ *
+ * Return: If the function fails - NULL.
+ *         Otherwise - the address of the new node.
  */
-
-unsigned int len(const dlistint_t *h)
-{
-	unsigned int i = 0;
-
-	if (h == NULL)
-		return (0);
-
-	while (h != NULL)
-	{
-		h = h->next;
-		i++;
-	}
-
-	return (i);
-}
-
-/**
-* insert_dnodeint_at_index - inserts a new node at a given position.
-* @h : head
-* @idx : index of the list where the new node should be added
-* @n : number
-* Return: the address of the new node, or NULL if it failed
-*/
-
 dlistint_t *insert_dnodeint_at_index(dlistint_t **h, unsigned int idx, int n)
 {
-	dlistint_t *new;
-	dlistint_t *temp;
-	unsigned int i = 0,  num_node = 0;
+	dlistint_t *tmp = *h, *new;
 
-	if (h == NULL || (*h == NULL && idx > 0))
-		return (NULL);
+	if (idx == 0)
+		return (add_dnodeint(h, n));
 
-	temp = *h;
-	if ((idx == 0 && *h != NULL) || (*h == NULL && idx == 0))
+	for (; idx != 1; idx--)
 	{
-		new = add_dnodeint(h, n);
-		return (new);
-	}
-	num_node = len(temp);
-	if (idx > num_node)
-	{
-		return (NULL);
-	}
-	if (num_node == idx)
-	{
-		new = add_dnodeint_end(h, n);
-		return (new);
-	}
-	else
-	{
-		new = malloc(sizeof(dlistint_t));
-		if (new == NULL)
+		tmp = tmp->next;
+		if (tmp == NULL)
 			return (NULL);
-		while (i != idx)
-		{
-			temp = temp->next;
-			i++;
-		}
-		new->n = n;
-		new->next = temp;
-		new->prev = temp->prev;
-		temp->prev->next = new;
-		temp->prev = new;
 	}
+
+	if (tmp->next == NULL)
+		return (add_dnodeint_end(h, n));
+
+	new = malloc(sizeof(dlistint_t));
+	if (new == NULL)
+		return (NULL);
+
+	new->n = n;
+	new->prev = tmp;
+	new->next = tmp->next;
+	tmp->next->prev = new;
+	tmp->next = new;
+
 	return (new);
 }
